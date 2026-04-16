@@ -83,6 +83,7 @@
             border-radius: 12px;
             padding: 25px;
             transition: all 0.3s ease;
+            position: relative;
         }
 
         .mission-card:hover {
@@ -93,6 +94,23 @@
         .mission-card.completed {
             background: linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%);
             border-color: #66bb6a;
+        }
+
+        .mission-card.locked {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .lock-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ff9800;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
         }
 
         .mission-number {
@@ -136,6 +154,12 @@
         .mission-btn:hover {
             background-color: #6d4c2c;
             transform: scale(1.02);
+        }
+
+        .mission-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            transform: none;
         }
 
         /* BADGES */
@@ -187,6 +211,7 @@
             font-size: 1.1em;
             cursor: pointer;
             transition: all 0.3s ease;
+            margin: 5px;
         }
 
         .certificate-btn:hover:not(:disabled) {
@@ -241,7 +266,7 @@
                 <h3>🔍 The Tab Jungle Challenge</h3>
                 <p><strong>Mengamati:</strong> Identifikasi 3+ aplikasi yang digunakan bersama saat mengerjakan tugas.</p>
                 <p style="color: #8c6239; font-weight: 600;">⭐ +10 XP</p>
-                <button class="mission-btn" onclick="completeMission(1, 10)">Mulai</button>
+                <button class="mission-btn" onclick="startMission(1, 10)">Mulai</button>
             </div>
 
             <div class="mission-card" id="mission2">
@@ -249,7 +274,7 @@
                 <h3>🌉 The Secret Bridge</h3>
                 <p><strong>Menanya:</strong> Pelajari Claude Connectors dan jawab pertanyaan kritis.</p>
                 <p style="color: #8c6239; font-weight: 600;">⭐ +20 XP</p>
-                <button class="mission-btn" onclick="completeMission(2, 20)">Mulai</button>
+                <button class="mission-btn" onclick="startMission(2, 20)" disabled>Mulai</button>
             </div>
 
             <div class="mission-card" id="mission3">
@@ -257,7 +282,7 @@
                 <h3>🔗 Connection Quest</h3>
                 <p><strong>Mencoba:</strong> Simulasi menghubungkan 3 alat utama untuk proyek.</p>
                 <p style="color: #8c6239; font-weight: 600;">⭐ +30 XP</p>
-                <button class="mission-btn" onclick="completeMission(3, 30)">Mulai</button>
+                <button class="mission-btn" onclick="startMission(3, 30)" disabled>Mulai</button>
             </div>
 
             <div class="mission-card" id="mission4">
@@ -265,7 +290,7 @@
                 <h3>🔬 Decoding the MCP</h3>
                 <p><strong>Menalar:</strong> Pahami Model Context Protocol dan ambil kuis.</p>
                 <p style="color: #8c6239; font-weight: 600;">⭐ +40 XP</p>
-                <button class="mission-btn" onclick="completeMission(4, 40)">Mulai</button>
+                <button class="mission-btn" onclick="startMission(4, 40)" disabled>Mulai</button>
             </div>
 
             <div class="mission-card" id="mission5">
@@ -273,7 +298,7 @@
                 <h3>🎤 Master Prompt Presentation</h3>
                 <p><strong>Mengomunikasikan:</strong> Buat Master Prompt kreatif untuk mengotomatisasi tugas.</p>
                 <p style="color: #8c6239; font-weight: 600;">⭐ +50 XP</p>
-                <button class="mission-btn" onclick="completeMission(5, 50)">Mulai</button>
+                <button class="mission-btn" onclick="startMission(5, 50)" disabled>Mulai</button>
             </div>
         </div>
 
@@ -304,10 +329,12 @@
         <div class="certificate-section">
             <h2 style="color: #8c6239; margin-bottom: 15px;">📜 Sertifikat Penghargaan</h2>
             <p style="margin-bottom: 20px;">Selesaikan semua 5 misi untuk mendapatkan sertifikat!</p>
-            <button class="certificate-btn" id="certBtn" onclick="generateCertificate()" disabled>Dapatkan Sertifikat</button>
+            <button class="certificate-btn" id="certBtn" onclick="generateCertificatePNG()" disabled>🏆 Dapatkan Sertifikat</button>
+            <button class="certificate-btn" id="certBtnJPEG" onclick="generateCertificateJPEG()" disabled>📥 Download JPEG</button>
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
         let studentData = {
             name: '',
@@ -335,21 +362,31 @@
             alert('Profil tersimpan! Selamat belajar, ' + name + '!');
         }
 
-        function completeMission(missionId, xpReward) {
+        function startMission(missionId, xpReward) {
             if (!studentData.name) {
                 alert('Simpan profil terlebih dahulu!');
                 return;
             }
 
+            // Check if previous mission is completed
+            if (missionId > 1 && !studentData.completedMissions.includes(missionId - 1)) {
+                alert('Selesaikan misi sebelumnya terlebih dahulu!');
+                return;
+            }
+
+            // Open mission detail page
+            window.location.href = `mission.html?missionId=${missionId}&xp=${xpReward}`;
+        }
+
+        function completeMission(missionId, xpReward) {
             if (!studentData.completedMissions.includes(missionId)) {
                 studentData.completedMissions.push(missionId);
                 studentData.xp += xpReward;
                 saveData();
                 updateUI();
-                alert('🎉 Selamat! Kamu mendapatkan +' + xpReward + ' XP!');
-            } else {
-                alert('Misi ini sudah diselesaikan!');
+                return true;
             }
+            return false;
         }
 
         function updateUI() {
@@ -365,9 +402,22 @@
 
             for (let i = 1; i <= 5; i++) {
                 const card = document.getElementById('mission' + i);
+                const btn = card.querySelector('.mission-btn');
+                
                 if (studentData.completedMissions.includes(i)) {
                     card.classList.add('completed');
-                    card.querySelector('.mission-btn').textContent = '✅ Selesai';
+                    btn.textContent = '✅ Selesai';
+                    btn.disabled = false;
+                } else {
+                    // Unlock only if previous mission is done
+                    if (i === 1 || studentData.completedMissions.includes(i - 1)) {
+                        btn.disabled = false;
+                        card.classList.remove('locked');
+                    } else {
+                        btn.disabled = true;
+                        card.classList.add('locked');
+                        btn.textContent = '🔒 Terkunci';
+                    }
                 }
 
                 const badge = document.getElementById('badge' + i);
@@ -376,15 +426,98 @@
                 }
             }
 
-            document.getElementById('certBtn').disabled = studentData.completedMissions.length !== 5;
+            const allCompleted = studentData.completedMissions.length === 5;
+            document.getElementById('certBtn').disabled = !allCompleted;
+            document.getElementById('certBtnJPEG').disabled = !allCompleted;
         }
 
-        function generateCertificate() {
+        function generateCertificatePNG() {
             if (studentData.completedMissions.length !== 5) {
                 alert('Selesaikan semua misi terlebih dahulu!');
                 return;
             }
-            alert('🏆 Sertifikat Anda:\n\nDiberikan kepada:\n' + studentData.name + '\n\nTelah menyelesaikan Misi Penyelamatan Waktu dengan sempurna!');
+
+            const certificateHTML = createCertificateHTML();
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = certificateHTML;
+            tempDiv.style.position = 'fixed';
+            tempDiv.style.left = '-9999px';
+            document.body.appendChild(tempDiv);
+
+            html2canvas(tempDiv, {
+                backgroundColor: '#fffaf5',
+                scale: 2,
+                useCORS: true
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.href = canvas.toDataURL('image/png');
+                link.download = `Sertifikat_${studentData.name.replace(/\s+/g, '_')}.png`;
+                link.click();
+                document.body.removeChild(tempDiv);
+                alert('✅ Sertifikat PNG berhasil diunduh!');
+            });
+        }
+
+        function generateCertificateJPEG() {
+            if (studentData.completedMissions.length !== 5) {
+                alert('Selesaikan semua misi terlebih dahulu!');
+                return;
+            }
+
+            const certificateHTML = createCertificateHTML();
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = certificateHTML;
+            tempDiv.style.position = 'fixed';
+            tempDiv.style.left = '-9999px';
+            document.body.appendChild(tempDiv);
+
+            html2canvas(tempDiv, {
+                backgroundColor: '#fffaf5',
+                scale: 2,
+                useCORS: true
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.href = canvas.toDataURL('image/jpeg', 0.95);
+                link.download = `Sertifikat_${studentData.name.replace(/\s+/g, '_')}.jpeg`;
+                link.click();
+                document.body.removeChild(tempDiv);
+                alert('✅ Sertifikat JPEG berhasil diunduh!');
+            });
+        }
+
+        function createCertificateHTML() {
+            const today = new Date();
+            const dateStr = today.toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
+
+            return `
+                <div style="
+                    width: 1000px;
+                    height: 600px;
+                    background: linear-gradient(135deg, #fffaf5 0%, #fff5e6 100%);
+                    border: 8px solid #8c6239;
+                    border-radius: 20px;
+                    padding: 60px;
+                    box-sizing: border-box;
+                    text-align: center;
+                    font-family: 'Plus Jakarta Sans', serif;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    box-shadow: 0 20px 60px rgba(140, 98, 57, 0.3);
+                ">
+                    <div style="font-size: 48px; margin-bottom: 20px;">🏆 📜 🎓</div>
+                    <h1 style="color: #8c6239; font-size: 48px; margin-bottom: 30px; font-weight: 800;">SERTIFIKAT PENGHARGAAN</h1>
+                    <p style="color: #795548; font-size: 18px; margin-bottom: 40px;">Dengan bangga dipersembahkan kepada</p>
+                    <h2 style="color: #6d4c2c; font-size: 42px; font-weight: 800; margin-bottom: 40px; text-decoration: underline;">${studentData.name}</h2>
+                    <p style="color: #795548; font-size: 16px; line-height: 1.8; margin-bottom: 30px;">
+                        Telah berhasil menyelesaikan<br/>
+                        <strong>Misi Penyelamatan Waktu</strong><br/>
+                        Menguasai Claude Connectors dengan sempurna
+                    </p>
+                    <p style="color: #795548; font-size: 14px; margin-top: 40px;">📅 ${dateStr}</p>
+                    <p style="color: #8c6239; font-size: 20px; font-weight: 600; margin-top: 20px;">Total XP: ${studentData.xp} 🌟</p>
+                </div>
+            `;
         }
 
         function saveData() {
@@ -394,4 +527,4 @@
         loadData();
     </script>
 </body>
-    </html>
+                                                                         </html>
