@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Misi Otomatisasi Claude - Belajar AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Great+Vibes&display=swap');
+        
+        body {
+            font-family: 'Plus+Jakarta+Sans', sans-serif;
+            background-color: #fdf8f3;
+            color: #5d4037;
+        }
+
+        .card-brown { background-color: #fffaf5; border: 2px solid #e2cfb0; }
+        
+        .btn-action {
+            background-color: #8c6239;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .btn-action:hover {
+            background-color: #6d4c2c;
+            transform: translateY(-2px);
+        }
+
+        .progress-bar { height: 10px; background-color: #e2cfb0; border-radius: 5px; overflow: hidden; }
+        .progress-fill { height: 100%; background-color: #8c6239; width: 0%; transition: width 0.5s ease; }
+
+        .hidden-section { display: none; }
+
+        /* Gaya Sertifikat yang Stabil untuk Download */
+        #certDownloadWrapper {
+            width: 1123px; /* Ukuran A4 Landscape pada 96 DPI */
+            height: 794px;
+            background: white;
+            padding: 40px;
+            box-sizing: border-box;
+            position: fixed;
+            left: -5000px; /* Sembunyikan jauh dari layar */
+            top: 0;
+        }
+
+        .cert-frame {
+            border: 20px solid #8c6239;
+            height: 100%;
+            width: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .cert-inner {
+            border: 4px double #d7ba89;
+            height: 100%;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background-color: #fffcf9;
+        }
+
+        .cert-text-name {
+            font-family: 'Great Vibes', cursive;
+            font-size: 84px;
+            color: #5d4037;
+            margin: 30px 0;
+            display: block;
+        }
+
+        /* Gaya untuk Preview di layar agar tetap rapi */
+        .preview-box {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            border: 8px solid #8c6239;
+            padding: 15px;
+            background: white;
+            box-shadow: 0 10px 25px rgba(140, 98, 57, 0.2);
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <!-- KONTAINER TERSEMBUNYI UNTUK DOWNLOAD (UKURAN TETAP) -->
+    <div id="certDownloadWrapper">
+        <div class="cert-frame">
+            <div class="cert-inner">
+                <div style="font-size: 24px; letter-spacing: 8px; color: #8c6239; font-weight: 800; margin-bottom: 20px;">SERTIFIKAT PENGHARGAAN</div>
+                <div style="font-size: 20px; color: #795548;">Diberikan dengan bangga kepada:</div>
+                <div id="dlName" class="cert-text-name">Nama Peserta</div>
+                <div style="font-size: 22px; color: #5d4037; max-width: 800px; line-height: 1.5;">
+                    Telah berhasil menyelesaikan misi pembelajaran interaktif mengenai<br>
+                    <strong style="color: #8c6239;">Otomatisasi Alur Kerja menggunakan Claude AI</strong><br>
+                    dengan hasil yang sangat memuaskan melalui Pendekatan Saintifik.
+                </div>
+                <div style="margin-top: 60px; width: 100%; display: flex; justify-content: space-around;">
+                    <div style="text-align: center;">
+                        <div style="border-top: 2px solid #8c6239; width: 200px; margin-top: 40px;"></div>
+                        <p style="font-size: 16px; color: #8c6239; margin-top: 10px;">Instruktur Belajar</p>
+                    </div>
+                    <div style="text-align: center; position: relative; top: -20px;">
+                        <div style="width: 80px; height: 80px; background: #8c6239; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; border: 4px solid #d7ba89;">LULUS</div>
+                        <p style="font-size: 14px; color: #8c6239; margin-top: 5px;">Digital Seal</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-4xl mx-auto">
+        <header class="mb-8 text-center" id="gameHeader">
+            <h1 class="text-3xl font-800 text-[#5d4037] mb-2">🕵️ Misi Otomatisasi Claude</h1>
+            <div class="progress-bar max-w-xs mx-auto mb-2">
+                <div id="progressFill" class="progress-fill"></div>
+            </div>
+            <p id="progressText" class="text-xs font-bold text-[#8c6239]">Progress: 0%</p>
+        </header>
+
+        <main>
+            <!-- Langkah input Nama (Langsung ke bagian krusial) -->
+            <section id="stepInput" class="card-brown p-8 rounded-2xl text-center">
+                <h2 class="text-2xl font-bold mb-4">Misi Terakhir: Penerbitan Sertifikat</h2>
+                <p class="mb-6">Kamu telah mempelajari bagaimana Claude mengotomatisasi workflow. Sekarang, tuliskan namamu untuk sertifikat!</p>
+                <input type="text" id="userNameInput" placeholder="Ketik Nama Lengkap" class="w-full max-w-sm p-4 border-2 border-[#8c6239] rounded-xl mb-4 text-center text-lg focus:ring-2 ring-[#d7ba89] outline-none">
+                <button onclick="showFinalPreview()" class="btn-action px-8 py-3 rounded-xl font-bold w-full max-w-sm">Tampilkan Pratinjau</button>
+            </section>
+
+            <!-- Halaman Pratinjau & Download -->
+            <section id="previewStep" class="hidden-section text-center">
+                <h2 class="text-2xl font-bold mb-2">Pratinjau Sertifikat</h2>
+                <p class="text-sm text-gray-500 mb-6">Pastikan nama sudah benar</p>
+
+                <!-- Box Preview (Hanya tampilan visual di browser) -->
+                <div class="preview-box mb-8">
+                    <div class="border-2 border-[#d7ba89] p-4 text-center">
+                        <div class="text-[10px] tracking-[3px] text-[#8c6239] font-bold">SERTIFIKAT</div>
+                        <div id="previewName" class="font-['Great_Vibes'] text-3xl my-2 text-[#5d4037]">Nama Kamu</div>
+                        <div class="text-[10px] text-gray-600 italic">Telah menyelesaikan modul Otomatisasi Claude AI</div>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap justify-center gap-4">
+                    <button onclick="downloadFile('pdf')" id="btnPdf" class="btn-action px-6 py-3 rounded-xl font-bold flex items-center gap-2">
+                        <span>📄 Download PDF</span>
+                    </button>
+                    <button onclick="downloadFile('jpeg')" id="btnJpeg" class="bg-amber-600 hover:bg-amber-700 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2">
+                        <span>🖼️ Download JPEG</span>
+                    </button>
+                </div>
+                <button onclick="location.reload()" class="mt-8 text-sm text-[#8c6239] underline">Ganti Nama</button>
+                
+                <div id="statusMsg" class="mt-4 text-sm font-bold text-[#8c6239]"></div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        function updateProgress(p) {
+            document.getElementById('progressFill').style.width = p + '%';
+            document.getElementById('progressText').innerText = `Progress: ${p}%`;
+        }
+
+        function showFinalPreview() {
+            const name = document.getElementById('userNameInput').value.trim();
+            if(!name) return alert("Masukkan nama terlebih dahulu!");
+            
+            // Set nama di preview dan di kontainer download tersembunyi
+            document.getElementById('previewName').innerText = name;
+            document.getElementById('dlName').innerText = name;
+            
+            document.getElementById('stepInput').classList.add('hidden-section');
+            document.getElementById('previewStep').classList.remove('hidden-section');
+            updateProgress(100);
+        }
+
+        async function downloadFile(format) {
+            const name = document.getElementById('userNameInput').value.trim().replace(/\s+/g, '_');
+            const element = document.getElementById('certDownloadWrapper');
+            const status = document.getElementById('statusMsg');
+            
+            status.innerText = "⏳ Sedang memproses file...";
+            
+            try {
+                // Render elemen tersembunyi yang memiliki ukuran fixed (1123x794)
+                const canvas = await html2canvas(element, {
+                    scale: 2, // Meningkatkan ketajaman
+                    useCORS: true,
+                    logging: false,
+                    width: 1123,
+                    height: 794
+                });
+
+                if (format === 'pdf') {
+                    const imgData = canvas.toDataURL('image/jpeg', 0.95);
+                    const { jsPDF } = window.jspdf;
+                    // Ukuran A4 Landscape
+                    const pdf = new jsPDF('l', 'px', [1123, 794]);
+                    pdf.addImage(imgData, 'JPEG', 0, 0, 1123, 794);
+                    pdf.save(`Sertifikat_${name}.pdf`);
+                } else {
+                    // Download JPEG
+                    const imgData = canvas.toDataURL('image/jpeg', 0.9);
+                    const link = document.createElement('a');
+                    link.download = `Sertifikat_${name}.jpg`;
+                    link.href = imgData;
+                    link.click();
+                }
+                status.innerText = "✅ Berhasil diunduh!";
+            } catch (err) {
+                console.error(err);
+                status.innerText = "❌ Gagal mengunduh. Coba lagi.";
+            }
+        }
+
+        // Init progress
+        updateProgress(75);
+    </script>
+</body>
+</html>
