@@ -3,224 +3,395 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Misi Otomatisasi Claude - Belajar AI</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <title>🕵️ Misi Penyelamatan Waktu: Menguasai Claude Connectors</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Great+Vibes&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
         
-        body {
-            font-family: 'Plus+Jakarta+Sans', sans-serif;
-            background-color: #fdf8f3;
-            color: #5d4037;
+        * {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        .card-brown { background-color: #fffaf5; border: 2px solid #e2cfb0; }
-        
-        .btn-action {
-            background-color: #8c6239;
+        body {
+            background: linear-gradient(135deg, #fdf8f3 0%, #f5e6d3 100%);
+            color: #5d4037;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* HEADER */
+        header {
+            background: linear-gradient(135deg, #8c6239 0%, #6d4c2c 100%);
             color: white;
+            padding: 40px 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(140, 98, 57, 0.2);
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            font-weight: 800;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        /* PROGRESS BAR */
+        .progress-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background-color: #e2cfb0;
+            border-radius: 15px;
+            overflow: hidden;
+            border: 2px solid #d7ba89;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #8c6239 0%, #d7ba89 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        /* MISSIONS GRID */
+        .missions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .mission-card {
+            background: linear-gradient(135deg, #fffaf5 0%, #fff5e6 100%);
+            border: 2px solid #e2cfb0;
+            border-radius: 12px;
+            padding: 25px;
             transition: all 0.3s ease;
         }
 
-        .btn-action:hover {
+        .mission-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 32px rgba(140, 98, 57, 0.2);
+        }
+
+        .mission-card.completed {
+            background: linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%);
+            border-color: #66bb6a;
+        }
+
+        .mission-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #8c6239;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-weight: 800;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        .mission-card h3 {
+            color: #6d4c2c;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .mission-card p {
+            color: #795548;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .mission-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #8c6239;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .mission-btn:hover {
+            background-color: #6d4c2c;
+            transform: scale(1.02);
+        }
+
+        /* BADGES */
+        .badges-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .badge {
+            background: #e2cfb0;
+            border: 2px solid #d7ba89;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            opacity: 0.5;
+            transition: all 0.3s ease;
+        }
+
+        .badge.unlocked {
+            background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+            border-color: #ff6f00;
+            opacity: 1;
+            transform: scale(1.05);
+        }
+
+        .badge-icon {
+            font-size: 2.5em;
+            margin-bottom: 8px;
+        }
+
+        /* CERTIFICATE */
+        .certificate-section {
+            background: linear-gradient(135deg, #fffaf5 0%, #fff5e6 100%);
+            padding: 25px;
+            border-radius: 12px;
+            border: 2px solid #e2cfb0;
+            text-align: center;
+        }
+
+        .certificate-btn {
+            padding: 15px 40px;
+            background-color: #8c6239;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .certificate-btn:hover:not(:disabled) {
             background-color: #6d4c2c;
             transform: translateY(-2px);
         }
 
-        .progress-bar { height: 10px; background-color: #e2cfb0; border-radius: 5px; overflow: hidden; }
-        .progress-fill { height: 100%; background-color: #8c6239; width: 0%; transition: width 0.5s ease; }
-
-        .hidden-section { display: none; }
-
-        /* Gaya Sertifikat yang Stabil untuk Download */
-        #certDownloadWrapper {
-            width: 1123px; /* Ukuran A4 Landscape pada 96 DPI */
-            height: 794px;
-            background: white;
-            padding: 40px;
-            box-sizing: border-box;
-            position: fixed;
-            left: -5000px; /* Sembunyikan jauh dari layar */
-            top: 0;
+        .certificate-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
         }
 
-        .cert-frame {
-            border: 20px solid #8c6239;
-            height: 100%;
-            width: 100%;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-
-        .cert-inner {
-            border: 4px double #d7ba89;
-            height: 100%;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            background-color: #fffcf9;
-        }
-
-        .cert-text-name {
-            font-family: 'Great Vibes', cursive;
-            font-size: 84px;
-            color: #5d4037;
-            margin: 30px 0;
-            display: block;
-        }
-
-        /* Gaya untuk Preview di layar agar tetap rapi */
-        .preview-box {
-            width: 100%;
-            max-width: 600px;
-            margin: 0 auto;
-            border: 8px solid #8c6239;
-            padding: 15px;
-            background: white;
-            box-shadow: 0 10px 25px rgba(140, 98, 57, 0.2);
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+            .missions-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
-<body class="p-4 md:p-8">
+<body>
+    <div class="container">
+        <header>
+            <h1>🕵️ Misi Penyelamatan Waktu</h1>
+            <p>Menguasai Claude Connectors - Belajar Sambil Bermain!</p>
+        </header>
 
-    <!-- KONTAINER TERSEMBUNYI UNTUK DOWNLOAD (UKURAN TETAP) -->
-    <div id="certDownloadWrapper">
-        <div class="cert-frame">
-            <div class="cert-inner">
-                <div style="font-size: 24px; letter-spacing: 8px; color: #8c6239; font-weight: 800; margin-bottom: 20px;">SERTIFIKAT PENGHARGAAN</div>
-                <div style="font-size: 20px; color: #795548;">Diberikan dengan bangga kepada:</div>
-                <div id="dlName" class="cert-text-name">Nama Peserta</div>
-                <div style="font-size: 22px; color: #5d4037; max-width: 800px; line-height: 1.5;">
-                    Telah berhasil menyelesaikan misi pembelajaran interaktif mengenai<br>
-                    <strong style="color: #8c6239;">Otomatisasi Alur Kerja menggunakan Claude AI</strong><br>
-                    dengan hasil yang sangat memuaskan melalui Pendekatan Saintifik.
-                </div>
-                <div style="margin-top: 60px; width: 100%; display: flex; justify-content: space-around;">
-                    <div style="text-align: center;">
-                        <div style="border-top: 2px solid #8c6239; width: 200px; margin-top: 40px;"></div>
-                        <p style="font-size: 16px; color: #8c6239; margin-top: 10px;">Instruktur Belajar</p>
-                    </div>
-                    <div style="text-align: center; position: relative; top: -20px;">
-                        <div style="width: 80px; height: 80px; background: #8c6239; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; border: 4px solid #d7ba89;">LULUS</div>
-                        <p style="font-size: 14px; color: #8c6239; margin-top: 5px;">Digital Seal</p>
-                    </div>
-                </div>
+        <div class="progress-section">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-weight: 600; color: #8c6239;">
+                <span id="levelDisplay">Level: Novice</span>
+                <span id="xpDisplay">XP: 0/300</span>
             </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <div style="background: linear-gradient(135deg, #fffaf5 0%, #fff5e6 100%); padding: 25px; border-radius: 10px; border: 2px solid #e2cfb0; margin-bottom: 30px;">
+            <h2 style="color: #8c6239; margin-bottom: 15px;">👤 Profil Siswa</h2>
+            <div style="display: flex; gap: 10px;">
+                <input type="text" id="studentName" placeholder="Masukkan nama lengkapmu..." style="flex: 1; padding: 12px; border: 2px solid #d7ba89; border-radius: 8px;" />
+                <button onclick="saveStudentProfile()" style="padding: 12px 30px; background-color: #8c6239; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">Simpan</button>
+            </div>
+        </div>
+
+        <h2 style="color: #8c6239; font-size: 1.8em; margin-bottom: 20px; text-align: center;">🎮 Misi-Misi Pembelajaran</h2>
+        <div class="missions-grid">
+            <div class="mission-card" id="mission1">
+                <div class="mission-number">1</div>
+                <h3>🔍 The Tab Jungle Challenge</h3>
+                <p><strong>Mengamati:</strong> Identifikasi 3+ aplikasi yang digunakan bersama saat mengerjakan tugas.</p>
+                <p style="color: #8c6239; font-weight: 600;">⭐ +10 XP</p>
+                <button class="mission-btn" onclick="completeMission(1, 10)">Mulai</button>
+            </div>
+
+            <div class="mission-card" id="mission2">
+                <div class="mission-number">2</div>
+                <h3>🌉 The Secret Bridge</h3>
+                <p><strong>Menanya:</strong> Pelajari Claude Connectors dan jawab pertanyaan kritis.</p>
+                <p style="color: #8c6239; font-weight: 600;">⭐ +20 XP</p>
+                <button class="mission-btn" onclick="completeMission(2, 20)">Mulai</button>
+            </div>
+
+            <div class="mission-card" id="mission3">
+                <div class="mission-number">3</div>
+                <h3>🔗 Connection Quest</h3>
+                <p><strong>Mencoba:</strong> Simulasi menghubungkan 3 alat utama untuk proyek.</p>
+                <p style="color: #8c6239; font-weight: 600;">⭐ +30 XP</p>
+                <button class="mission-btn" onclick="completeMission(3, 30)">Mulai</button>
+            </div>
+
+            <div class="mission-card" id="mission4">
+                <div class="mission-number">4</div>
+                <h3>🔬 Decoding the MCP</h3>
+                <p><strong>Menalar:</strong> Pahami Model Context Protocol dan ambil kuis.</p>
+                <p style="color: #8c6239; font-weight: 600;">⭐ +40 XP</p>
+                <button class="mission-btn" onclick="completeMission(4, 40)">Mulai</button>
+            </div>
+
+            <div class="mission-card" id="mission5">
+                <div class="mission-number">5</div>
+                <h3>🎤 Master Prompt Presentation</h3>
+                <p><strong>Mengomunikasikan:</strong> Buat Master Prompt kreatif untuk mengotomatisasi tugas.</p>
+                <p style="color: #8c6239; font-weight: 600;">⭐ +50 XP</p>
+                <button class="mission-btn" onclick="completeMission(5, 50)">Mulai</button>
+            </div>
+        </div>
+
+        <h2 style="color: #8c6239; font-size: 1.5em; margin: 30px 0 20px 0;">🏆 Pencapaian & Badge</h2>
+        <div class="badges-grid">
+            <div class="badge" id="badge1">
+                <div class="badge-icon">🎯</div>
+                <div>Focus XP</div>
+            </div>
+            <div class="badge" id="badge2">
+                <div class="badge-icon">🔍</div>
+                <div>Curious Explorer</div>
+            </div>
+            <div class="badge" id="badge3">
+                <div class="badge-icon">⚡</div>
+                <div>Efficiency Power-Up</div>
+            </div>
+            <div class="badge" id="badge4">
+                <div class="badge-icon">🧠</div>
+                <div>Knowledge Master</div>
+            </div>
+            <div class="badge" id="badge5">
+                <div class="badge-icon">👑</div>
+                <div>Master of Productivity</div>
+            </div>
+        </div>
+
+        <div class="certificate-section">
+            <h2 style="color: #8c6239; margin-bottom: 15px;">📜 Sertifikat Penghargaan</h2>
+            <p style="margin-bottom: 20px;">Selesaikan semua 5 misi untuk mendapatkan sertifikat!</p>
+            <button class="certificate-btn" id="certBtn" onclick="generateCertificate()" disabled>Dapatkan Sertifikat</button>
         </div>
     </div>
 
-    <div class="max-w-4xl mx-auto">
-        <header class="mb-8 text-center" id="gameHeader">
-            <h1 class="text-3xl font-800 text-[#5d4037] mb-2">🕵️ Misi Otomatisasi Claude</h1>
-            <div class="progress-bar max-w-xs mx-auto mb-2">
-                <div id="progressFill" class="progress-fill"></div>
-            </div>
-            <p id="progressText" class="text-xs font-bold text-[#8c6239]">Progress: 0%</p>
-        </header>
-
-        <main>
-            <!-- Langkah input Nama (Langsung ke bagian krusial) -->
-            <section id="stepInput" class="card-brown p-8 rounded-2xl text-center">
-                <h2 class="text-2xl font-bold mb-4">Misi Terakhir: Penerbitan Sertifikat</h2>
-                <p class="mb-6">Kamu telah mempelajari bagaimana Claude mengotomatisasi workflow. Sekarang, tuliskan namamu untuk sertifikat!</p>
-                <input type="text" id="userNameInput" placeholder="Ketik Nama Lengkap" class="w-full max-w-sm p-4 border-2 border-[#8c6239] rounded-xl mb-4 text-center text-lg focus:ring-2 ring-[#d7ba89] outline-none">
-                <button onclick="showFinalPreview()" class="btn-action px-8 py-3 rounded-xl font-bold w-full max-w-sm">Tampilkan Pratinjau</button>
-            </section>
-
-            <!-- Halaman Pratinjau & Download -->
-            <section id="previewStep" class="hidden-section text-center">
-                <h2 class="text-2xl font-bold mb-2">Pratinjau Sertifikat</h2>
-                <p class="text-sm text-gray-500 mb-6">Pastikan nama sudah benar</p>
-
-                <!-- Box Preview (Hanya tampilan visual di browser) -->
-                <div class="preview-box mb-8">
-                    <div class="border-2 border-[#d7ba89] p-4 text-center">
-                        <div class="text-[10px] tracking-[3px] text-[#8c6239] font-bold">SERTIFIKAT</div>
-                        <div id="previewName" class="font-['Great_Vibes'] text-3xl my-2 text-[#5d4037]">Nama Kamu</div>
-                        <div class="text-[10px] text-gray-600 italic">Telah menyelesaikan modul Otomatisasi Claude AI</div>
-                    </div>
-                </div>
-
-                <div class="flex flex-wrap justify-center gap-4">
-                    <button onclick="downloadFile('pdf')" id="btnPdf" class="btn-action px-6 py-3 rounded-xl font-bold flex items-center gap-2">
-                        <span>📄 Download PDF</span>
-                    </button>
-                    <button onclick="downloadFile('jpeg')" id="btnJpeg" class="bg-amber-600 hover:bg-amber-700 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2">
-                        <span>🖼️ Download JPEG</span>
-                    </button>
-                </div>
-                <button onclick="location.reload()" class="mt-8 text-sm text-[#8c6239] underline">Ganti Nama</button>
-                
-                <div id="statusMsg" class="mt-4 text-sm font-bold text-[#8c6239]"></div>
-            </section>
-        </main>
-    </div>
-
     <script>
-        function updateProgress(p) {
-            document.getElementById('progressFill').style.width = p + '%';
-            document.getElementById('progressText').innerText = `Progress: ${p}%`;
-        }
+        let studentData = {
+            name: '',
+            xp: 0,
+            completedMissions: []
+        };
 
-        function showFinalPreview() {
-            const name = document.getElementById('userNameInput').value.trim();
-            if(!name) return alert("Masukkan nama terlebih dahulu!");
-            
-            // Set nama di preview dan di kontainer download tersembunyi
-            document.getElementById('previewName').innerText = name;
-            document.getElementById('dlName').innerText = name;
-            
-            document.getElementById('stepInput').classList.add('hidden-section');
-            document.getElementById('previewStep').classList.remove('hidden-section');
-            updateProgress(100);
-        }
-
-        async function downloadFile(format) {
-            const name = document.getElementById('userNameInput').value.trim().replace(/\s+/g, '_');
-            const element = document.getElementById('certDownloadWrapper');
-            const status = document.getElementById('statusMsg');
-            
-            status.innerText = "⏳ Sedang memproses file...";
-            
-            try {
-                // Render elemen tersembunyi yang memiliki ukuran fixed (1123x794)
-                const canvas = await html2canvas(element, {
-                    scale: 2, // Meningkatkan ketajaman
-                    useCORS: true,
-                    logging: false,
-                    width: 1123,
-                    height: 794
-                });
-
-                if (format === 'pdf') {
-                    const imgData = canvas.toDataURL('image/jpeg', 0.95);
-                    const { jsPDF } = window.jspdf;
-                    // Ukuran A4 Landscape
-                    const pdf = new jsPDF('l', 'px', [1123, 794]);
-                    pdf.addImage(imgData, 'JPEG', 0, 0, 1123, 794);
-                    pdf.save(`Sertifikat_${name}.pdf`);
-                } else {
-                    // Download JPEG
-                    const imgData = canvas.toDataURL('image/jpeg', 0.9);
-                    const link = document.createElement('a');
-                    link.download = `Sertifikat_${name}.jpg`;
-                    link.href = imgData;
-                    link.click();
-                }
-                status.innerText = "✅ Berhasil diunduh!";
-            } catch (err) {
-                console.error(err);
-                status.innerText = "❌ Gagal mengunduh. Coba lagi.";
+        function loadData() {
+            const saved = localStorage.getItem('studentData');
+            if (saved) {
+                studentData = JSON.parse(saved);
+                document.getElementById('studentName').value = studentData.name;
+                updateUI();
             }
         }
 
-        // Init progress
-        updateProgress(75);
+        function saveStudentProfile() {
+            const name = document.getElementById('studentName').value.trim();
+            if (!name) {
+                alert('Masukkan nama terlebih dahulu!');
+                return;
+            }
+            studentData.name = name;
+            saveData();
+            alert('Profil tersimpan! Selamat belajar, ' + name + '!');
+        }
+
+        function completeMission(missionId, xpReward) {
+            if (!studentData.name) {
+                alert('Simpan profil terlebih dahulu!');
+                return;
+            }
+
+            if (!studentData.completedMissions.includes(missionId)) {
+                studentData.completedMissions.push(missionId);
+                studentData.xp += xpReward;
+                saveData();
+                updateUI();
+                alert('🎉 Selamat! Kamu mendapatkan +' + xpReward + ' XP!');
+            } else {
+                alert('Misi ini sudah diselesaikan!');
+            }
+        }
+
+        function updateUI() {
+            const progressPercent = Math.min((studentData.xp / 300) * 100, 100);
+            document.getElementById('progressFill').style.width = progressPercent + '%';
+            document.getElementById('xpDisplay').textContent = `XP: ${studentData.xp}/300`;
+
+            let level = 'Novice';
+            if (studentData.xp >= 200) level = 'Automation Hero';
+            else if (studentData.xp >= 100) level = 'Connector';
+            
+            document.getElementById('levelDisplay').textContent = `Level: ${level}`;
+
+            for (let i = 1; i <= 5; i++) {
+                const card = document.getElementById('mission' + i);
+                if (studentData.completedMissions.includes(i)) {
+                    card.classList.add('completed');
+                    card.querySelector('.mission-btn').textContent = '✅ Selesai';
+                }
+
+                const badge = document.getElementById('badge' + i);
+                if (studentData.completedMissions.includes(i)) {
+                    badge.classList.add('unlocked');
+                }
+            }
+
+            document.getElementById('certBtn').disabled = studentData.completedMissions.length !== 5;
+        }
+
+        function generateCertificate() {
+            if (studentData.completedMissions.length !== 5) {
+                alert('Selesaikan semua misi terlebih dahulu!');
+                return;
+            }
+            alert('🏆 Sertifikat Anda:\n\nDiberikan kepada:\n' + studentData.name + '\n\nTelah menyelesaikan Misi Penyelamatan Waktu dengan sempurna!');
+        }
+
+        function saveData() {
+            localStorage.setItem('studentData', JSON.stringify(studentData));
+        }
+
+        loadData();
     </script>
 </body>
-</html>
+    </html>
